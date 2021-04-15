@@ -22,32 +22,32 @@
 #define MDIA 2 // media keys
 
 
-// Define a type for as many tap dance states as you need
-typedef enum {
-    TD_NONE,
-    TD_UNKNOWN,
-    TD_SINGLE_TAP,
-    TD_SINGLE_HOLD,
-    TD_DOUBLE_TAP
-} td_state_t;
+// // Define a type for as many tap dance states as you need
+// typedef enum {
+//     TD_NONE,
+//     TD_UNKNOWN,
+//     TD_SINGLE_TAP,
+//     TD_SINGLE_HOLD,
+//     TD_DOUBLE_TAP
+// } td_state_t;
 
-typedef struct {
-    bool is_press_action;
-    td_state_t state;
-} td_tap_t;
+// typedef struct {
+//     bool is_press_action;
+//     td_state_t state;
+// } td_tap_t;
 
-enum {
-    NPAD_LAYR, // Our custom tap dance key; add any other tap dance keys to this enum
-};
+// enum {
+//     NPAD_LAYR, // Our custom tap dance key; add any other tap dance keys to this enum
+// };
 
-// Declare the functions to be used with your tap dance key(s)
+// // Declare the functions to be used with your tap dance key(s)
 
-// Function associated with all tap dances
-td_state_t cur_dance(qk_tap_dance_state_t *state);
+// // Function associated with all tap dances
+// td_state_t cur_dance(qk_tap_dance_state_t *state);
 
-// Functions associated with individual tap dances
-void ql_finished(qk_tap_dance_state_t *state, void *user_data);
-void ql_reset(qk_tap_dance_state_t *state, void *user_data);
+// // Functions associated with individual tap dances
+// void ql_finished(qk_tap_dance_state_t *state, void *user_data);
+// void ql_reset(qk_tap_dance_state_t *state, void *user_data);
 
 
 
@@ -80,7 +80,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 //-----------------------------------------------------------------------------------------------------//
     KC_LSPO,LCTL_T(KC_Z), LALT_T(KC_X),  KC_C,    KC_V,       KC_B,    KC_N,    KC_M, KC_COMM,  RALT_T(KC_DOT), RCTL_T(KC_SLSH),  KC_RSPC,
 //------------------------------------------------------------------------------------------------------------------//
-                          TD(NPAD_LAYR), KC_SPC, KC_BSPC,     KC_DEL,  KC_ENT,  MO(MDIA),
+                          MO(MODS), KC_SPC, KC_BSPC,     KC_DEL,  KC_ENT,  MO(MDIA),
                                         XXXXXXX, KC_LGUI,     KC_RGUI, XXXXXXX
 
   ),
@@ -90,11 +90,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 //-------------------------------------------------------------------------------------------------------------------//
      RESET, XXXXXXX, S(KC_F2), KC_LCBR, KC_RCBR, KC_VOLU,       XXXXXXX,    KC_7,   KC_8,   KC_9, KC_PMNS, XXXXXXX,
 //-------------------------------------------------------------------------------------------------------------------//
-    XXXXXXX, XXXXXXX, KC_GRV, KC_LBRC, KC_RBRC, KC_VOLD,       KC_0,       KC_4,   KC_5,   KC_6, KC_PPLS, XXXXXXX,
+    XXXXXXX, XXXXXXX, KC_GRV, KC_LBRC, KC_RBRC, KC_VOLD,         XXXXXXX,   KC_4,   KC_5,   KC_6, KC_PPLS, XXXXXXX,
 //-------------------------------------------------------------------------------------------------------------------//
-    XXXXXXX, XXXXXXX, XXXXXXX, KC_MPRV, KC_MNXT, KC_MPLY,       KC_PDOT,    KC_1,   KC_2,   KC_3, KC_PENT, XXXXXXX,
+    XXXXXXX, XXXXXXX, XXXXXXX, KC_MPRV, KC_MNXT, KC_MPLY,       XXXXXXX,    KC_1,   KC_2,   KC_3, KC_PENT, XXXXXXX,
 //-------------------------------------------------------------------------------------------------------------------//
-                               _______, _______, _______,       _______, _______, _______,
+                               _______, _______, _______,      KC_MINS, KC_0, KC_DOT,
                                         RESET, _______,       _______, _______
   ),
 
@@ -113,98 +113,96 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
 };
-
 /*
 layer_state_t layer_state_set_user(layer_state_t state) {
   return update_tri_layer_state(state, NPAD, MDIA, OTHR);
 }
 */
 
+// // Determine the current tap dance state
+// td_state_t cur_dance(qk_tap_dance_state_t *state) {
+//     if (state->count == 1) {
+//         if (!state->pressed) return TD_SINGLE_TAP;
+//         else return TD_SINGLE_HOLD;
+//     } else if (state->count == 2) return TD_DOUBLE_TAP;
+//     else return TD_UNKNOWN;
+// }
 
-// Determine the current tap dance state
-td_state_t cur_dance(qk_tap_dance_state_t *state) {
-    if (state->count == 1) {
-        if (!state->pressed) return TD_SINGLE_TAP;
-        else return TD_SINGLE_HOLD;
-    } else if (state->count == 2) return TD_DOUBLE_TAP;
-    else return TD_UNKNOWN;
-}
+// // Initialize tap structure associated with example tap dance key
+// static td_tap_t ql_tap_state = {
+//     .is_press_action = true,
+//     .state = TD_NONE
+// };
 
-// Initialize tap structure associated with example tap dance key
-static td_tap_t ql_tap_state = {
-    .is_press_action = true,
-    .state = TD_NONE
-};
+// // Functions that control what our tap dance key does
+// void ql_finished(qk_tap_dance_state_t *state, void *user_data) {
+//     ql_tap_state.state = cur_dance(state);
+//     switch (ql_tap_state.state) {
+//         case TD_SINGLE_TAP:
+//             if (layer_state_is(MODS)) {
+//                 // If already set, then switch it off
+//                 layer_off(MODS);
+//             } else {
+//                 // If not already set, then switch the layer on
+//                 set_oneshot_layer(MODS, ONESHOT_START);
+//                 clear_oneshot_layer_state(ONESHOT_PRESSED);
+//             }
+//             break;
+//         case TD_SINGLE_HOLD:
+//             layer_on(MODS);
+//             break;
+//         case TD_DOUBLE_TAP:
+//             // Check to see if the layer is already set
+//             if (layer_state_is(MODS)) {
+//                 // If already set, then switch it off
+//                 layer_off(MODS);
+//             } else {
+//                 // If not already set, then switch the layer on
+//                 layer_on(MODS);
+//             }
+//             break;
+//         default:
+//             break;
+//     }
+// }
 
-// Functions that control what our tap dance key does
-void ql_finished(qk_tap_dance_state_t *state, void *user_data) {
-    ql_tap_state.state = cur_dance(state);
-    switch (ql_tap_state.state) {
-        case TD_SINGLE_TAP:
-            if (layer_state_is(MODS)) {
-                // If already set, then switch it off
-                layer_off(MODS);
-            } else {
-                // If not already set, then switch the layer on
-                set_oneshot_layer(MODS, ONESHOT_START);
-                clear_oneshot_layer_state(ONESHOT_PRESSED);
-            }
-            break;
-        case TD_SINGLE_HOLD:
-            layer_on(MODS);
-            break;
-        case TD_DOUBLE_TAP:
-            // Check to see if the layer is already set
-            if (layer_state_is(MODS)) {
-                // If already set, then switch it off
-                layer_off(MODS);
-            } else {
-                // If not already set, then switch the layer on
-                layer_on(MODS);
-            }
-            break;
-        default:
-            break;
-    }
-}
+// void ql_reset(qk_tap_dance_state_t *state, void *user_data) {
+//     // If the key was held down and now is released then switch off the layer
+//    switch (ql_tap_state.state) {
+//         case TD_SINGLE_TAP:
+//             break;
+//         case TD_SINGLE_HOLD:
+//             layer_off(MODS);
+//             break;
+//         default:
+//             break;
+//     }
+//     ql_tap_state.state = TD_NONE;
+// }
 
-void ql_reset(qk_tap_dance_state_t *state, void *user_data) {
-    // If the key was held down and now is released then switch off the layer
-   switch (ql_tap_state.state) {
-        case TD_SINGLE_TAP:
-            break;
-        case TD_SINGLE_HOLD:
-            layer_off(MODS);
-            break;
-        default:
-            break;
-    }
-    ql_tap_state.state = TD_NONE;
-}
+// // Associate our tap dance key with its functionality
+// qk_tap_dance_action_t tap_dance_actions[] = {
+//     [NPAD_LAYR] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, ql_finished, ql_reset)
+// };
 
-// Associate our tap dance key with its functionality
-qk_tap_dance_action_t tap_dance_actions[] = {
-    [NPAD_LAYR] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, ql_finished, ql_reset)
-};
+// bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
 
-bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
-
-  switch (keycode) {
-    case KC_TRNS:
-    case KC_NO:
-      /* Always cancel one-shot layer when another key gets pressed */
-      if (record->event.pressed && is_oneshot_layer_active())
-      clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
-      return true;
-    case RESET:
-      /* Don't allow reset from oneshot layer state */
-      if (record->event.pressed && is_oneshot_layer_active()){
-        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
-        return false;
-      }
-      return true;
-    default:
-      return true;
-  }
-  return true;
-}
+//   switch (keycode) {
+//     case KC_TRNS:
+//     case KC_NO:
+//       /* Always cancel one-shot layer when another key gets pressed */
+//       if (record->event.pressed && is_oneshot_layer_active())
+//       clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
+//       return true;
+//     case RESET:
+//       /* Don't allow reset from oneshot layer state */
+//       if (record->event.pressed && is_oneshot_layer_active()){
+//         clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
+//         return false;
+//       }
+//       return true;
+//     default:
+//       return true;
+//   }
+//   return true;
+// }
